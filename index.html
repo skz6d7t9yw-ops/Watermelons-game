@@ -6,27 +6,175 @@
 			name="viewport"
 			content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
 		 />
-		<title>合成大西瓜-修复点击即失败版</title>
+		<title>七夕限定 · 合成大西瓜</title>
 		<style>
 			*{margin:0;padding:0;box-sizing:border-box}
-			body{background:#f8e9c8;font-family:system-ui,-apple-system,BlinkMacSystemFont,sans-serif}
+			body{
+				background: linear-gradient(160deg, #fde2f3 0%, #e8d4f8 100%);
+				font-family:system-ui,-apple-system,BlinkMacSystemFont,sans-serif;
+				min-height:100vh;
+				padding:10px 0;
+			}
 			#wrap{max-width:420px;margin:12px auto;position:relative}
-			#gameCanvas{width:100%;background:#fff8e8;border:2px solid #965a2f;border-radius:12px;display:block}
-			#scoreBar{display:flex;justify-content:space-between;padding:6px 10px;font-size:18px;font-weight:bold;color:#6b4423}
+			#gameCanvas{
+				width:100%;
+				background:#fff7fc;
+				border:3px solid #d8a8d8;
+				border-radius:16px;
+				display:block;
+				box-shadow: 0 0 16px #e0b8e077;
+			}
+			#scoreBar{
+				display:flex;
+				justify-content:space-between;
+				padding:8px 12px;
+				font-size:18px;
+				font-weight:bold;
+				color:#904680;
+				background:#ffffff99;
+				border-radius:12px;
+				margin-bottom:8px;
+				border:1px solid #e8c8e8;
+			}
+			/* 七夕漂浮花瓣动画 */
+			.petal{
+				position:absolute;
+				pointer-events:none;
+				font-size:20px;
+				animation: fall 8s linear infinite;
+				opacity:0.7;
+				z-index:5;
+			}
+			@keyframes fall{
+				0%{transform:translateY(-30px) rotate(0deg);opacity:0;}
+				10%{opacity:0.8;}
+				90%{opacity:0.6;}
+				100%{transform:translateY(700px) rotate(360deg);opacity:0;}
+			}
+			/* 星光闪烁 */
+			.star{
+				position:absolute;
+				pointer-events:none;
+				font-size:14px;
+				color:#fff;
+				text-shadow:0 0 6px #ffe888;
+				animation: twinkle 2s ease-in-out infinite;
+				z-index:4;
+			}
+			@keyframes twinkle{
+				0%,100%{opacity:0.3;transform:scale(0.9);}
+				50%{opacity:1;transform:scale(1.1);}
+			}
 			/* 开始界面 */
-			#startScreen{position:absolute;inset:0;background:#fffdf7;z-index:100;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px;border-radius:12px}
-			#startScreen h1{font-size:26px;margin-bottom:12px;color:#d85030}
-			.fruitTable{font-size:14px;margin:14px 0;line-height:1.6;background:#fff;padding:10px;border-radius:8px;border:1px solid #ddd}
-			#startBtn{padding:12px 32px;font-size:20px;border:none;background:#ff7847;color:#fff;border-radius:10px;margin-top:10px}
-			#modal{position:absolute;inset:0;background:rgba(0,0,0,0.65);display:none;align-items:center;justify-content:center;z-index:99}
-			.box{background:#fff;padding:24px 28px;border-radius:16px;text-align:center;min-width:260px}
-			.box h2{margin-bottom:10px}
-			.box p{margin:6px 0;font-size:17px}
-			#restartBtn{margin-top:14px;padding:8px 22px;font-size:17px;border:none;background:#ff7847;color:#fff;border-radius:8px}
+			#startScreen{
+				position:absolute;
+				inset:0;
+				background:linear-gradient(150deg, #fff5fb, #f4e8ff);
+				z-index:100;
+				display:flex;
+				flex-direction:column;
+				align-items:center;
+				justify-content:center;
+				padding:20px;
+				border-radius:16px;
+				border:2px solid #e0b8e0;
+			}
+			#startScreen .moon{
+				font-size:48px;
+				position:absolute;
+				top:16px;
+				right:16px;
+				opacity:0.7;
+			}
+			#startScreen h1{
+				font-size:28px;
+				margin-bottom:6px;
+				color:#c45498;
+				text-shadow:0 0 4px #ffd0e8;
+			}
+			#startScreen .sub-title{
+				color:#a060a0;
+				font-size:15px;
+				margin-bottom:16px;
+			}
+			.fruitTable{
+				font-size:14px;
+				margin:14px 0;
+				line-height:1.7;
+				background:#ffffffdd;
+				padding:12px;
+				border-radius:12px;
+				border:1px solid #e8c8e8;
+				color:#703070;
+			}
+			#startBtn{
+				padding:13px 36px;
+				font-size:20px;
+				border:none;
+				background:linear-gradient(90deg,#e878b8,#d060c0);
+				color:#fff;
+				border-radius:12px;
+				margin-top:10px;
+				box-shadow:0 4px 10px #d080c070;
+				transition:0.2s;
+			}
+			#startBtn:active{transform:scale(0.96);}
+			/* 结算弹窗 */
+			#modal{
+				position:absolute;
+				inset:0;
+				background:rgba(100,30,90,0.65);
+				display:none;
+				align-items:center;
+				justify-content:center;
+				z-index:99;
+			}
+			.box{
+				background:linear-gradient(140deg,#fff8fc,#f8ecff);
+				padding:28px 30px;
+				border-radius:20px;
+				text-align:center;
+				min-width:280px;
+				border:2px solid #e2b0d8;
+				box-shadow:0 0 20px #c888c866;
+			}
+			.box h2{
+				margin-bottom:12px;
+				color:#b84888;
+				font-size:24px;
+			}
+			.box p{
+				margin:8px 0;
+				font-size:17px;
+				color:#773377;
+			}
+			#restartBtn{
+				margin-top:16px;
+				padding:10px 26px;
+				font-size:17px;
+				border:none;
+				background:linear-gradient(90deg,#e070b0,#c858b8);
+				color:#fff;
+				border-radius:10px;
+				box-shadow:0 3px 8px #d070b060;
+				transition:0.2s;
+			}
+			#restartBtn:active{transform:scale(0.96);}
 		</style>
 	</head>
 	<body>
 		<div id="wrap">
+			<!-- 七夕动态装饰容器 -->
+			<div class="star" style="top:12%;left:8%">✦</div>
+			<div class="star" style="top:30%;left:92%">✧</div>
+			<div class="star" style="top:60%;left:5%">✦</div>
+			<div class="star" style="top:75%;left:88%">✧</div>
+			<div class="petal" style="left:10%;animation-delay:0s;">🌸</div>
+			<div class="petal" style="left:25%;animation-delay:1.5s;">💮</div>
+			<div class="petal" style="left:45%;animation-delay:3s;">🌸</div>
+			<div class="petal" style="left:65%;animation-delay:4.5s;">💮</div>
+			<div class="petal" style="left:82%;animation-delay:6s;">🌸</div>
+
 			<div id="scoreBar">
 				<div>得分：<span id="score">0</span></div>
 				<div>最高分：<span id="high">0</span></div>
@@ -34,7 +182,9 @@
 			<canvas id="gameCanvas"></canvas>
 			<!-- 开局开始界面 -->
 			<div id="startScreen">
+				<div class="moon">🌙</div>
 				<h1>🍉合成大西瓜</h1>
+				<div class="sub-title">七夕鹊桥限定 · 花果相逢</div>
 				<div class="fruitTable">
 					<div>【官方合成顺序&得分】</div>
 					<div>
@@ -51,6 +201,9 @@
 					<div style="font-size:13px;color:#666">
 						每累计投放10个当前水果，解锁下一级可投放水果
 					</div>
+					<div style="margin-top:10px;text-align:center;color:#b05090;">
+						💞 七夕快乐 · 花果圆满
+					</div>
 				</div>
 				<button id="startBtn">开始游戏</button>
 			</div>
@@ -60,6 +213,7 @@
 					<h2 id="title">游戏结束</h2>
 					<p>本局分数：<span id="finalScore">0</span></p>
 					<p>历史最高：<span id="finalHigh">0</span></p>
+					<p style="margin-top:10px;font-size:14px;color:#b860a0;">🌙七夕愿你收获满满甜蜜</p>
 					<button id="restartBtn">再来一次</button>
 				</div>
 			</div>
@@ -306,18 +460,18 @@
 			};
 			function loop(){
 			  ctx.clearRect(0,0,W,H);
-			  //绘制红色虚线失败警戒线
+			  //绘制七夕鹊桥粉色虚线警戒线
 			  ctx.save();
-			  ctx.strokeStyle="#ff3333";
-			  ctx.lineWidth=2;
-			  ctx.setLineDash([8,6]);
+			  ctx.strokeStyle="#d060b0";
+			  ctx.lineWidth=3;
+			  ctx.setLineDash([10,7]);
 			  ctx.beginPath();
 			  ctx.moveTo(0,FAIL_LINE_Y);
 			  ctx.lineTo(W,FAIL_LINE_Y);
 			  ctx.stroke();
-			  ctx.fillStyle="#ff3333";
+			  ctx.fillStyle="#b04090";
 			  ctx.font="14px sans-serif";
-			  ctx.fillText("失败警戒线",10,FAIL_LINE_Y-6);
+			  ctx.fillText("🌌鹊桥警戒线",10,FAIL_LINE_Y-6);
 			  ctx.restore();
 			  if(gameStarted && !gameOver) physicsStep();
 			  // 绘制所有水果
